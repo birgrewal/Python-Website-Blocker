@@ -9,14 +9,14 @@ def block():
     urlList = list(urls.split(','))
     
     for u in urlList:
-        hostFile = open('hosts.txt', 'r+')
+        hostFile = open(host, 'r+')
         hosts = hostFile.read()
         hostFile.close()
 
         if (ip+'\t'+u) in hosts:
             print(u,' is already blocked')
         else:
-            hostFile = open('hosts.txt', 'w+')
+            hostFile = open(host, 'w+')
             hostFile.write(hosts+'\n'+ip+'\t'+u)
             hostFile.close()
 
@@ -26,7 +26,7 @@ def unblock():
     urls = url.get(1.0, END)
     urlList = list(urls.split(','))
 
-    hostFile = open('hosts.txt', 'r+')
+    hostFile = open(host, 'r+')
     hosts = hostFile.read()
     hostFile.close()
     
@@ -41,7 +41,7 @@ def unblock():
                 else:
                     hosts += i+'\n'
 
-            hostFile = open('hosts.txt', 'w+')
+            hostFile = open(host, 'w+')
             hostFile.write(hosts)
             hostFile.close()
         else:
