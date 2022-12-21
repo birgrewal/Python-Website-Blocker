@@ -1,14 +1,16 @@
 import customtkinter # importing customtkinter module
-import tkinter as tk # importing tkinter module
+from sys import platform # importing platform from sys module
 
 host ='C:\Windows\System32\drivers\etc\hosts'
 ip = '127.0.0.1'
 
 # Functions
-def block():
+def block(): # For blocking the urls
     urls = url.get('1.0', 'end')
     urlList = list(urls.split(','))
     
+    # Working: Takes urls that user entered, then adds them to the hosts file by redirecting them to localhost ip
+
     for u in urlList:
         hostFile = open(host, 'r+')
         hosts = hostFile.read()
@@ -23,9 +25,11 @@ def block():
 
             print(u,' has been blocked!')
 
-def unblock():
+def unblock(): # For unblocking urls
     urls = url.get('1.0', 'end')
     urlList = list(urls.split(','))
+
+    # Working: Takes urls that user entered, then checks if they are present in hosts file (and redirected to localhost ip), and then removes them from the file
 
     hostFile = open(host, 'r+')
     hosts = hostFile.read()
@@ -48,15 +52,20 @@ def unblock():
         else:
             print(u,' is already Unblocked')
 
-def setHost():
+def setHost(): # To check the system platform and editing hosts file path accordingly
     global host
     
-    val = radio_var.get()
-
-    if val == 1:
+    if platform == 'win32':
         host = 'C:\Windows\System32\drivers\etc\hosts'
-    else:
+    elif platform == 'linux' or platform == 'linux2':
         host = '/etc/hosts'
+    elif platform == 'darwin':
+        host = '/private/etc/hosts'
+    else:
+        print('System Not Compatible!')
+        quit()
+    
+    print(host)
 
 # GUI Code
 root = customtkinter.CTk()
@@ -65,43 +74,38 @@ root.minsize(300, 240)
 root.maxsize(600, 460)
 root.title("Website Blocker")
 
+# Fonts
+bg = customtkinter.CTkFont(family="Helevetica", size=35, weight = 'bold')
+md = customtkinter.CTkFont(family="Helevetica", size=18)
+sm = customtkinter.CTkFont(family="Helevetica", size=15)
+
+# Heading
 header = customtkinter.CTkFrame(root, fg_color="transparent")
 header.pack()
 
-h1 = customtkinter.CTkLabel(header, text="Website Blocker", font=customtkinter.CTkFont(family="Helevetica", size=35, weight = 'bold'))
+h1 = customtkinter.CTkLabel(header, text="Website Blocker", font=bg)
 h1.pack(pady=15)
 
+# Main - Textbox and buttons for submission
 main = customtkinter.CTkFrame(root, fg_color="transparent")
 main.pack(pady=30)
 
-
 inputs = customtkinter.CTkFrame(main, fg_color='transparent')
 inputs.grid(row=0)
-lb = customtkinter.CTkLabel(inputs, text="Website URL", font=customtkinter.CTkFont(family="Helevetica", size=18))
+lb = customtkinter.CTkLabel(inputs, text="Website URL", font=md)
 lb.grid(row=0, padx=50, pady=20)
 
-url = customtkinter.CTkTextbox(inputs, width=300, height=5, font=customtkinter.CTkFont(family="Helevetica", size=15))
+url = customtkinter.CTkTextbox(inputs, width=300, height=8, font=sm)
 url.grid(row=0, column=1)
 
-lb = customtkinter.CTkLabel(inputs, text="Choose OS", font=customtkinter.CTkFont(family="Helevetica", size=18))
-lb.grid(row=1, column=0, padx=15, pady=20)
-
-radio_var = tk.IntVar()
-radiobutton_1 = customtkinter.CTkRadioButton(master=inputs, text="Windows",
-                                             command=setHost, variable= radio_var, value=1)
-radiobutton_2 = customtkinter.CTkRadioButton(master=inputs, text="Linux",
-                                             command=setHost, variable= radio_var, value=2)
-radiobutton_1.grid(row = 1, column=1, pady=10)
-radiobutton_2.grid(row = 2, column=1, pady=10)
-radiobutton_1.select()
-
+setHost() # Calling setHost function to change hosts file path
 
 btns = customtkinter.CTkFrame(main, fg_color='transparent')
 btns.grid(row=1, pady=20)
-btn = customtkinter.CTkButton(btns, text="Block", fg_color="red", width=100, height=45, font=customtkinter.CTkFont(family="Helevetica", size=16, weight='bold'), command=block)
+btn = customtkinter.CTkButton(btns, text="Block", fg_color="red", width=100, height=50, font=customtkinter.CTkFont(family="Helevetica", size=16, weight='bold'), command=block)
 btn.grid(row=0, column=0, pady=20, padx=30)
 
-btn = customtkinter.CTkButton(btns, text="Unblock", fg_color="green", width=100, height=45, font=customtkinter.CTkFont(family="Helevetica", size=16, weight='bold'), command=unblock)
+btn = customtkinter.CTkButton(btns, text="Unblock", fg_color="green", width=100, height=50, font=customtkinter.CTkFont(family="Helevetica", size=16, weight='bold'), command=unblock)
 btn.grid(row=0, column=1, pady=20, padx=30)
 
 root.mainloop()
